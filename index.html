@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Frases Motivacionales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quote-fade {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        .quote-hidden {
+            opacity: 0;
+            transform: translateY(12px) scale(0.98);
+        }
+        .quote-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex flex-col items-center justify-between p-4 sm:p-8 relative overflow-x-hidden">
+
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 left-1/3 -translate-x-1/2 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <main class="w-full max-w-xl my-auto py-8 z-10 flex flex-col items-center">
+        <div class="glass-card w-full rounded-3xl p-6 sm:p-10 shadow-2xl mb-8 flex flex-col items-center text-center relative transition-all duration-300">
+
+            <i class="fa-solid font-serif text-3xl sm:text-4xl text-pink-400/50 mb-3">“</i>
+            <div id="quote-container" class="quote-fade quote-visible min-h-[110px] flex flex-col items-center justify-center">
+                <p id="quote-text" class="text-lg sm:text-2xl font-semibold leading-relaxed text-slate-100">
+                    Haz de cada día tu obra maestra.
+                </p>
+                <p id="quote-author" class="text-sm sm:text-base font-medium text-pink-300 mt-4 tracking-wide">
+                    — John Wooden
+                </p>
+            </div>
+        </div>
+
+        <button id="generate-btn" onclick="generateNewQuote()" class="group relative inline-flex items-center justify-center p-0.5 overflow-hidden text-base sm:text-lg font-bold rounded-full group bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white shadow-xl hover:shadow-pink-500/25 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none">
+            <span class="relative px-8 py-4 transition-all ease-in duration-75 bg-slate-950/40 rounded-full group-hover:bg-opacity-0 flex items-center gap-3">
+                
+                <span>Generar Frase</span>
+            </span>
+        </button>
+    </main>
+
+    <footer class="w-full text-center text-xs text-slate-400 z-10 pb-2">
+        <p></p>
+    </footer>
+
+    <script>
+        const quotes = [
+            { text: "El único modo de hacer un gran trabajo es amar lo que haces.", author: "Steve Jobs" },
+            { text: "No cuentes los días, haz que los días cuenten.", author: "Muhammad Ali" },
+            { text: "La felicidad no es algo hecho. Proviene de tus propias acciones.", author: "Dalai Lama" },
+            { text: "Tu tiempo es limitado, de modo que no lo malgastes viviendo la vida de alguien más.", author: "Steve Jobs" },
+            { text: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", author: "Robert Collier" },
+            { text: "Haz de cada día tu obra maestra.", author: "John Wooden" },
+            { text: "Cree que puedes y casi estarás allá.", author: "Theodore Roosevelt" },
+            { text: "La mejor manera de predecir el futuro es creándolo.", author: "Peter Drucker" },
+            { text: "Lo único imposible es aquello que no intentas.", author: "Anónimo" },
+            { text: "La disciplina es el puente entre las metas y los logros.", author: "Jim Rohn" },
+            { text: "Si puedes soñarlo, puedes hacerlo.", author: "Walt Disney" },
+            { text: "El futuro pertenece a quienes creen en la belleza de sus sueños.", author: "Eleanor Roosevelt" },
+            { text: "No busques los errores, busca un remedio.", author: "Henry Ford" },
+            { text: "Un viaje de mil millas comienza con un solo paso.", author: "Lao Tsé" },
+            { text: "Haz lo que puedas, con lo que tengas, donde estés.", author: "Theodore Roosevelt" },
+            { text: "El único modo de hacer un gran trabajo es amar lo que haces.", author: "Steve Jobs" },
+            { text: "La vida es lo que pasa mientras estás ocupado haciendo otros planes.", author: "John Lennon" },
+            { text: "Pienso, luego existo.", author: "René Descartes" },
+            { text: "Conócete a ti mismo.", author: "Sócrates" },
+            { text: "Solo sé que no sé nada.", author: "Sócrates" },
+            { text: "La felicidad no es algo ya hecho. Viene de tus propias acciones.", author: "Dalai Lama" },
+            { text: "No esperes; el momento nunca será el adecuado.", author: "Napoleon Hill" },
+            { text: "El conocimiento es poder.", author: "Francis Bacon" },
+            { text: "Ser o no ser, esa es la cuestión.", author: "William Shakespeare" },
+            { text: "La simplicidad es la máxima sofisticación.", author: "Leonardo da Vinci" },
+            { text: "Lo que no te mata, te hace más fuerte.", author: "Friedrich Nietzsche" },
+            { text: "La medida del amor es amar sin medida.", author: "San Agustín" },
+            { text: "Cree que puedes y casi lo habrás logrado.", author: "Theodore Roosevelt" },
+            { text: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", author: "Robert Collier" },
+            { text: "La mente lo es todo. En lo que piensas te conviertes.", author: "Buda" },
+            { text: "No busques los errores, busca un remedio.", author: "Henry Ford" },
+            { text: "En medio de la dificultad yace la oportunidad.", author: "Albert Einstein" },
+            { text: "La imaginación es más importante que el conocimiento.", author: "Albert Einstein" },
+            { text: "La educación es el arma más poderosa que puedes usar para cambiar el mundo.", author: "Nelson Mandela" },
+            { text: "Siempre parece imposible hasta que se hace.", author: "Nelson Mandela" },
+            { text: "La mejor manera de predecir el futuro es crearlo.", author: "Peter Drucker" },
+            { text: "Haz de cada día tu obra maestra.", author: "John Wooden" },
+            { text: "El secreto para salir adelante es empezar.", author: "Mark Twain" },
+            { text: "No se recuerdan los días, se recuerdan los momentos.", author: "Cesare Pavese" },
+            { text: "Vence a quien se vence a sí mismo.", author: "Calderón de la Barca" },
+            { text: "El futuro pertenece a quienes creen en la belleza de sus sueños.", author: "Eleanor Roosevelt" },
+            { text: "Nuestra gloria más grande no consiste en no caer nunca, sino en levantarnos cada vez que caemos.", author: "Confucio" },
+            { text: "Exígete mucho a ti mismo y espera poco de los demás.", author: "Confucio" },
+            { text: "Podrán cortar todas las flores, pero no podrán detener la primavera.", author: "Pablo Neruda" },
+            { text: "Es durante nuestros momentos más oscuros cuando debemos enfocarnos para ver la luz.", author: "Aristóteles" },
+            { text: "Somos lo que hacemos repetidamente. La excelencia, entonces, no es un acto, sino un hábito.", author: "Aristóteles" },
+            { text: "El hombre es el arquitecto de su propio destino.", author: "Sustermans" },
+            { text: "Cualquiera que deje de aprender es viejo, ya sea a los veinte o a los ochenta.", author: "Henry Ford" },
+            { text: "Tanto si piensas que puedes, como si piensas que no puedes, estás en lo cierto.", author: "Henry Ford" },
+            { text: "Aquel que tiene un porqué para vivir se puede enfrentar a todos los cómos.", author: "Friedrich Nietzsche" },
+            { text: "La paz comienza con una sonrisa.", author: "Madre Teresa de Calcuta" },
+            { text: "No podemos hacer grandes cosas, solo cosas pequeñas con gran amor.", author: "Madre Teresa de Calcuta" },
+            { text: "Saber que se sabe lo que se sabe, y que no se sabe lo que no se sabe; he aquí el verdadero saber.", author: "Confucio" },
+            { text: "Donde hay amor hay vida.", author: "Mahatma Gandhi" },
+            { text: "Sé el cambio que quieres ver en el mundo.", author: "Mahatma Gandhi" },
+            { text: "Un ojo por ojo y el mundo se quedará ciego.", author: "Mahatma Gandhi" },
+            { text: "La mayor victoria es la que se obtiene sobre uno mismo.", author: "Calderón de la Barca" },
+            { text: "El sabio no dice todo lo que piensa, pero siempre piensa todo lo que dice.", author: "Aristóteles" },
+            { text: "Hay alguien tan inteligente que aprende de la experiencia de los demás.", author: "Voltaire" },
+            { text: "Duda de todo. Encuentra tu propia luz.", author: "Buda" },
+            { text: "El dolor es inevitable, el sufrimiento es opcional.", author: "Buda" },
+            { text: "El tiempo es una imagen móvil de la eternidad.", author: "Platón" },
+            { text: "Buscando el bien de nuestros semejantes, encontramos el nuestro.", author: "Platón" },
+            { text: "Ningún mar en calma hizo experto a un marinero.", author: "Proverbio inglés" },
+            { text: "La vida es 10% lo que te ocurre y 90% cómo reaccionas a ello.", author: "Charles R. Swindoll" },
+            { text: "No cuentes los días, haz que los días cuenten.", author: "Muhammad Ali" },
+            { text: "La libertad no es la ausencia de compromiso, sino la capacidad de elegir.", author: "Paulo Coelho" },
+            { text: "Cuando quieres algo, todo el universo conspira para ayudarte a conseguirlo.", author: "Paulo Coelho" },
+            { text: "El misterio de la vida no es un problema a resolver, sino una realidad a experimentar.", author: "Frank Herbert" },
+            { text: "Si no escalas la montaña, jamás podrás disfrutar el paisaje.", author: "Pablo Neruda" },
+            { text: "Nada grande se ha hecho en el mundo sin pasión.", author: "Georg Wilhelm Friedrich Hegel" },
+            { text: "Todo lo que puedes imaginar es real.", author: "Pablo Picasso" },
+            { text: "La inspiración existe, pero tiene que encontrarte trabajando.", author: "Pablo Picasso" },
+            { text: "Cree en ti mismo y todo lo que eres.", author: "Christian D. Larson" },
+            { text: "No he fracasado. He encontrado 10.000 formas que no funcionan.", author: "Thomas Edison" },
+            { text: "El genio es un un por ciento de inspiración y un noventa y nueve por ciento de transpiración.", author: "Thomas Edison" },
+            { text: "La paciencia es amarga, pero su fruto es dulce.", author: "Jean-Jacques Rousseau" },
+            { text: "El destino mezcla las cartas y nosotros las jugamos.", author: "Arthur Schopenhauer" },
+            { text: "Solo los que se arriesgan a ir demasiado lejos pueden descubrir lo lejos que se puede llegar.", author: "T.S. Eliot" },
+            { text: "No hay camino para la paz, la paz es el camino.", author: "Mahatma Gandhi" },
+            { text: "El dinero no compra la felicidad, pero paga la producción.", author: "Proverbio" },
+            { text: "El mejor momento para plantar un árbol fue hace 20 años. El segundo mejor momento es ahora.", author: "Proverbio chino" },
+            { text: "Si quieres ir rápido, ve solo. Si quieres llegar lejos, ve acompañado.", author: "Proverbio africano" },
+            { text: "Caerse siete veces y levantarse ocho.", author: "Proverbio japonés" },
+            { text: "No le temas a los cambios lentos, teme solo a quedarte quieto.", author: "Proverbio chino" },
+            { text: "Aprender sin pensar es tiempo perdido; pensar sin aprender es peligroso.", author: "Confucio" },
+            { text: "Lo único constante es el cambio.", author: "Heráclito" },
+            { text: "Nadie se baña dos veces en el mismo río.", author: "Heráclito" },
+            { text: "A veces la pregunta es más importante que la respuesta.", author: "Nancy Willard" },
+            { text: "No hay nada imposible para aquel que lo intenta.", author: "Alejandro Magno" },
+            { text: "No es más rico el que más tiene, sino el que menos necesita.", author: "San Agustín" },
+            { text: "Tu tiempo es limitado, no lo malgastes viviendo la vida de otro.", author: "Steve Jobs" },
+            { text: "Sigue hambriento, sigue alocado.", author: "Steve Jobs" },
+            { text: "El coraje es la gracia bajo presión.", author: "Ernest Hemingway" },
+            { text: "El hombre que mueve montañas empieza quitando piedritas.", author: "Confucio" },
+            { text: "Los obstáculos son esas cosas espantosas que ves cuando quitas los ojos de tu meta.", author: "Henry Ford" },
+            { text: "Nunca es demasiado tarde para ser lo que podrías haber sido.", author: "George Eliot" },
+            { text: "Definir algo es limitarlo.", author: "Oscar Wilde" },
+            { text: "Sé tú mismo, los demás puestos ya están ocupados.", author: "Oscar Wilde" },
+            { text: "La verdad os hará libres.", author: "Jesús de Nazaret" },
+            { text: "Ama a tu prójimo como a ti mismo.", author: "Jesús de Nazaret" },
+            { text: "A donde quiera que vayas, ve con todo tu corazón.", author: "Confucio" },
+            { text: "Si no te gusta cómo son las cosas, cámbialas.", author: "Jim Rohn" },
+            { text: "La disciplina es el puente entre las metas y los logros.", author: "Jim Rohn" },
+            { text: "El cambio es la ley de la vida.", author: "John F. Kennedy" },
+            { text: "No preguntes qué puede hacer tu país por ti, pregunta qué puedes hacer tú por tu país.", author: "John F. Kennedy" },
+            { text: "El sabio busca lo que desea en su interior; el necio lo busca en los demás.", author: "Confucio" },
+            { text: "Lo que somos hoy proviene de nuestros pensamientos de ayer.", author: "Buda" },
+            { text: "El verdadero viaje de descubrimiento no consiste en buscar nuevos paisajes, sino en tener nuevos ojos.", author: "Marcel Proust" },
+            { text: "La felicidad depende de nosotros mismos.", author: "Aristóteles" },
+            { text: "Un día sin risa es un día perdido.", author: "Charlie Chaplin" },
+            { text: "La simplicidad es la clave de la verdadera elegancia.", author: "Coco Chanel" },
+            { text: "Actúa como si lo que haces marcara la diferencia. Lo hace.", author: "William James" },
+            { text: "Haz lo que puedas, con lo que tengas, donde estés.", author: "Theodore Roosevelt" },
+            { text: "En la vida no hay premios ni castigos, sino consecuencias.", author: "Robert G. Ingersoll" }
+        ];
+
+        let currentQuoteIndex = 0;
+        function getRandomQuote() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * quotes.length);
+            } while (newIndex === currentQuoteIndex && quotes.length > 1);
+            
+            currentQuoteIndex = newIndex;
+            return quotes[newIndex];
+        }
+
+        function generateNewQuote() {
+            const container = document.getElementById('quote-container');
+            const textElem = document.getElementById('quote-text');
+            const authorElem = document.getElementById('quote-author');
+
+            container.classList.remove('quote-visible');
+            container.classList.add('quote-hidden');
+
+            setTimeout(() => {
+                const newQuote = getRandomQuote();
+                textElem.textContent = newQuote.text;
+                authorElem.textContent = `— ${newQuote.author}`;
+
+                container.classList.remove('quote-hidden');
+                container.classList.add('quote-visible');
+            }, 400);
+        }
+    </script>
+</body>
+</html>
